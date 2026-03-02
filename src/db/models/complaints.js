@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "handled_by",
         as: "handler",
       });
-      Complaints.hasMany(models.Medicine_transactions, {
+      Complaints.hasMany(models.Medicine_trasactions, {
         foreignKey: "complaint_id",
         as: "medicine_transaction",
       });
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
+
         allowNull: false,
         primaryKey: true,
       },

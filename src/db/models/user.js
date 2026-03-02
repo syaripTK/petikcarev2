@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "user_id",
         as: "refresh_token",
       });
-      User.hasMany(models.Medicine_transactions, {
+      User.hasMany(models.Medicine_trasactions, {
         foreignKey: "given_by",
         as: "given_transactions",
       });
@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.UUID,
+        allowNull: false,
+        primaryKey: true,
       },
       name: {
         type: DataTypes.STRING(50),

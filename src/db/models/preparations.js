@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Preparations.hasMany(models.Medicines, {
+      Preparations.hasMany(models.Medicine, {
         foreignKey: "preparation_id",
         as: "preparation",
       });
@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
       },
@@ -32,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Preparations",
       tableName: "preparations",
+      timestamps: false,
     },
   );
   return Preparations;

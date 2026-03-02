@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Medicine_trasactions.belongsTo(models.Medicines, {
+      Medicine_trasactions.belongsTo(models.Medicine, {
         foreignKey: "medicine_id",
         as: "medicine",
       });
@@ -27,7 +27,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
       },
