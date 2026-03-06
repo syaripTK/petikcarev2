@@ -7,12 +7,13 @@ const {
 } = require("../modules/medicines/medicine.controller");
 const {
   createObatValidator,
+  updateStockValidator,
 } = require("../modules/medicines/medicine.validator");
 const validate = require("../shared/middlewares/errors/validate");
 
 const router = express.Router();
 router.get("/lookup", lookAllMedicines);
 router.post("/create", createObatValidator, validate, addMedicines);
-router.patch("/update/:id", updateMedicine);
+router.patch("/update/:id", updateStockValidator, validate, updateMedicine);
 router.delete("/drop/:id", dropMedicine);
 module.exports = router;

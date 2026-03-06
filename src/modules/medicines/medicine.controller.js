@@ -42,13 +42,9 @@ const updateMedicine = async (req, res) => {
     const { id } = req.params;
     const medicine = await findMedicines(id);
     if (!medicine) return failed(res, 404, "Obat tidak ditemukan");
-    const { nama_obat, deskripsi, stok, sediaan } = req.body;
-    const prep = await findPreparation(sediaan);
+    const { stok } = req.body;
     const body = {
-      name: nama_obat,
-      description: deskripsi,
       stock: stok,
-      preparation_id: prep.id,
     };
     await update(id, body);
     return success(res, 200, "Data obat berhasil diupdate");

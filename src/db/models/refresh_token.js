@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Refresh_token",
       tableName: "refresh_token",
+      timestamps: false,
     },
   );
   return Refresh_token;

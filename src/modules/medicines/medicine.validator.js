@@ -1,4 +1,4 @@
-const { body, param, query } = require("express-validator");
+const { body,} = require("express-validator");
 const { Medicine } = require("../../db/models/index.js");
 
 const createObatValidator = [
@@ -29,4 +29,14 @@ const createObatValidator = [
     .withMessage("Stok harus berupa angka positif"),
 ];
 
-module.exports = { createObatValidator };
+const updateStockValidator = [
+  body("stok")
+    .toInt()
+    .notEmpty()
+    .withMessage("Stok wajib diisi")
+    .bail()
+    .isInt({ min: 1 })
+    .withMessage("Stok harus berupa angka positif"),
+];
+
+module.exports = { createObatValidator, updateStockValidator };
