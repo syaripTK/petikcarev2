@@ -11,4 +11,11 @@ const loginValidator = [
   body("password").trim().notEmpty().withMessage("Password wajib diisi!"),
 ];
 
-module.exports = { loginValidator };
+const refreshValidator = [
+  body("refreshToken")
+    .trim()
+    .notEmpty()
+    .withMessage("Refresh token tidak boleh kosong"),
+];
+
+module.exports = { loginValidator, refreshValidator };

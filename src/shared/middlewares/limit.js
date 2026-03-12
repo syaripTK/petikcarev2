@@ -10,6 +10,4 @@ const loginLimiter = rateLimit({
   },
 });
 
-module.exports = {
-  loginLimiter,
-};
+module.exports = loginLimiter;

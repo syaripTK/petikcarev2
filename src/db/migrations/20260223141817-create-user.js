@@ -31,8 +31,7 @@ module.exports = {
         allowNull: false,
       },
       kamar: {
-        type: Sequelize.ENUM("none","religius", "integritas", "kerjasama"),
-        defaultValue: "none"
+        type: Sequelize.STRING(50),
       },
       createdAt: {
         type: Sequelize.DATE,

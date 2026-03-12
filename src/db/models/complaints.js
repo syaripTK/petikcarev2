@@ -48,7 +48,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       handled_by: {
         type: DataTypes.UUID,
-        allowNull: false,
       },
       handled_note: {
         type: DataTypes.TEXT,

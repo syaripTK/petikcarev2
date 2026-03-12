@@ -5,7 +5,13 @@ const {
 } = require("../../shared/utils/helpers");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { findByEmail, createRefresh } = require("./auth.service");
+const {
+  findByEmail,
+  createRefresh,
+  removeTokenByUser,
+  findByToken,
+  findId,
+} = require("./auth.service");
 const { failed, success } = require("../../shared/utils/payload");
 const { v4: uuidv4 } = require("uuid");
 
@@ -23,7 +29,6 @@ const login = async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
-    console.info(decoded);
     const body = { id: uuidv4(), user_id: user.id, token: refreshToken };
     await createRefresh(body);
     return success(res, 200, "Login berhasil", {
@@ -42,4 +47,37 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login };
+const logout = async (req, res) => {
+  try {
+    await removeTokenByUser(req.user.id);
+    return success(res, 200, "Logout berhasil");
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
+
+const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    const token = await findByToken(refreshToken);
+    if (!token) {
+      return failed(res, 403, "Refresh token tidak valid");
+    }
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      async (err, decoded) => {
+        if (err) return failed(res, 403, "Refresh token tidak valid");
+        const user = await findId(decoded.id);
+        const newAccessToken = generateAccessToken(user);
+        return success(res, 200, "Token berhasil diperbarui", {
+          accessToken: newAccessToken,
+        });
+      },
+    );
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
+
+module.exports = { login, logout, refreshToken };

@@ -1,4 +1,4 @@
-const { body,} = require("express-validator");
+const { body, param } = require("express-validator");
 const { Medicine } = require("../../db/models/index.js");
 
 const createObatValidator = [
@@ -30,6 +30,7 @@ const createObatValidator = [
 ];
 
 const updateStockValidator = [
+  param("id").isUUID().withMessage("ID harus berupa UUID yang valid"),
   body("stok")
     .toInt()
     .notEmpty()

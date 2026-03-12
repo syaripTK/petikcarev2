@@ -24,21 +24,21 @@ const findByEmail = async (email) => {
   });
 };
 
+const findByToken = async (token) => {
+  return await Refresh_token.findOne({
+    where: { token },
+  });
+};
+
 const remove = async (id) => {
   return await User.destroy({
     where: { id },
   });
 };
 
-const removeToken = async (token) => {
+const removeTokenByUser = async (user_id) => {
   return await Refresh_token.destroy({
-    where: { token },
-  });
-};
-
-const removeTokenByUser = async (userId) => {
-  return await Refresh_token.destroy({
-    where: { userId },
+    where: { user_id },
   });
 };
 
@@ -48,7 +48,7 @@ module.exports = {
   findId,
   findByRole,
   remove,
-  removeToken,
   removeTokenByUser,
   findByEmail,
+  findByToken,
 };
