@@ -50,10 +50,18 @@ const deleteById = async (id) => {
   await complaint.destroy();
 };
 
+const deleteBySantriId = async (santriId) => {
+  const complaints = await Complaints.findAll({ where: { santri_id: santriId } });
+  for (const complaint of complaints) {
+    await complaint.destroy();
+  }
+}
+
 module.exports = {
   create,
   getAll,
   getById,
   getBySantriId,
   deleteById,
+  deleteBySantriId,
 };

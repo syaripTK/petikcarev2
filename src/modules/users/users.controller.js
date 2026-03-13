@@ -1,5 +1,7 @@
 const { hashPassword } = require("../../shared/utils/helpers");
 const { failed, success } = require("../../shared/utils/payload");
+const { deleteRefreshTokensByUserId } = require("../auth/auth.service.js");
+const { deleteBySantriId } = require("../complaints/complaint.service.js");
 const {
   create,
   findId,
@@ -44,20 +46,21 @@ const editUser = async (req, res) => {
     if (!user) {
       return failed(res, 404, `User dengan id (${id}) tidak ditemukan`);
     }
-    const { nama, email, role, kamar } = req.body;
-    let password = user.password;
-    if (req.body.password) {
-      const hashed = hashPassword(req.body.password);
-      password = hashed;
+    
+    const updateBody = {};
+    if (req.body.nama !== undefined) updateBody.name = req.body.nama;
+    if (req.body.email !== undefined) updateBody.email = req.body.email;
+    if (req.body.role !== undefined) updateBody.role = req.body.role;
+    if (req.body.kamar !== undefined) updateBody.kamar = req.body.kamar;
+    if (req.body.password !== undefined) {
+      updateBody.password = await hashPassword(req.body.password);
     }
-    const body = {
-      name: nama,
-      email,
-      password,
-      role,
-      kamar,
-    };
-    await update(id, body);
+
+    if (Object.keys(updateBody).length === 0) {
+      return failed(res, 400, "Tidak ada field untuk diupdate");
+    }
+
+    await update(id, updateBody);
     return success(res, 200, "Data user berhasil diupdate");
   } catch (error) {
     return failed(res, 500, error.message);
@@ -68,10 +71,11 @@ const dropUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await findId(id);
-    console.info(user)
     if (!user) {
       return failed(res, 404, "Data user tidak ditemukan");
     }
+    await deleteBySantriId(id);
+    await deleteRefreshTokensByUserId(id);
     await remove(id);
     return success(res, 200, "User berhasil dihapus");
   } catch (error) {

@@ -42,6 +42,13 @@ const removeTokenByUser = async (user_id) => {
   });
 };
 
+const deleteRefreshTokensByUserId = async (userId) => {
+  const tokens = await Refresh_token.findAll({ where: { user_id: userId } });
+  for (const token of tokens) {
+    await token.destroy();
+  }
+};
+
 module.exports = {
   createUser,
   createRefresh,
@@ -51,4 +58,5 @@ module.exports = {
   removeTokenByUser,
   findByEmail,
   findByToken,
+  deleteRefreshTokensByUserId,
 };
