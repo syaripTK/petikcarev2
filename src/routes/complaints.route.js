@@ -5,6 +5,7 @@ const {
   getMyComplaints,
   getComplaintById,
   deleteComplaint,
+  responseToComplaint
 } = require("../modules/complaints/complaint.controller");
 const verifyToken = require("../shared/middlewares/authMiddleware");
 const {
@@ -38,6 +39,13 @@ router.get(
   idValidation,
   validate,
   getComplaintById,
+);
+router.post(
+  "/respond/:id",
+  verifyToken(["pengasuhan"]),
+  idValidation,
+  validate,
+  responseToComplaint,
 );
 
 module.exports = router;

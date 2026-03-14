@@ -13,6 +13,7 @@ const addMedicines = async (req, res) => {
   try {
     const { nama_obat, deskripsi, stok, sediaan } = req.body;
     const prep = await findPreparation(sediaan);
+    if (!prep) return failed(res, 404, "Sediaan tidak ditemukan");
     const body = {
       id: uuidv4(),
       name: nama_obat,
@@ -20,7 +21,6 @@ const addMedicines = async (req, res) => {
       stock: stok,
       preparation_id: prep.id,
     };
-    console.info(body);
     await create(body);
     return success(res, 201, "Data obat berhasil ditambahkan");
   } catch (error) {

@@ -5,13 +5,13 @@ const {
   getById,
   getBySantriId,
   deleteById,
+  handleComplaintResponse,
 } = require("./complaint.service.js");
 const { v4: uuidv4 } = require("uuid");
 
 const createComplaint = async (req, res) => {
   try {
     const { keluhan, keterangan } = req.body;
-    console.info(req.user);
     const data = {
       id: uuidv4(),
       santri_id: req.user.id,
@@ -66,10 +66,25 @@ const deleteComplaint = async (req, res) => {
   }
 };
 
+const responseToComplaint = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, catatan, medicines } = req.body;
+    const complaint = await handleComplaintResponse(id, req.user.id, {
+      status,
+      catatan,
+      medicines,
+    });
+    return success(res, 200, "Response to complaint successful", complaint);
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
 module.exports = {
   createComplaint,
   getAllComplaints,
   getComplaintById,
   getMyComplaints,
   deleteComplaint,
+  responseToComplaint,
 };

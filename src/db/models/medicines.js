@@ -36,6 +36,9 @@ module.exports = (sequelize, DataTypes) => {
       stock: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
+        validate: {
+          min: 0,
+        },
       },
       preparation_id: {
         type: DataTypes.UUID,

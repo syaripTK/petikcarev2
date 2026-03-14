@@ -11,6 +11,7 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING(100),
+        unique: true,
         allowNull: false,
       },
       description: {
@@ -41,8 +42,17 @@ module.exports = {
     await queryInterface.addIndex("medicines", ["preparation_id"], {
       name: "idx_medicines_prep_id",
     });
+    await queryInterface.addConstraint("medicines", {
+      fields: ["stock"],
+      type: "check",
+      where: {
+        stock: { [Sequelize.Op.gte]: 0 },
+      },
+      name: "check_stock_not_negative",
+    });
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeConstraint("medicines", "check_stock_not_negative");
     await queryInterface.dropTable("medicines");
   },
 };

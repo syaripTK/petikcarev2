@@ -52,8 +52,20 @@ module.exports = {
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
+    await queryInterface.addConstraint("medicine_trasactions", {
+      fields: ["quantity"],
+      type: "check",
+      where: {
+        quantity: { [Sequelize.Op.gt]: 0 },
+      },
+      name: "check_quantity_positive",
+    });
   },
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeConstraint(
+      "medicine_trasactions",
+      "check_quantity_positive",
+    );
     await queryInterface.dropTable("medicine_trasactions");
   },
 };

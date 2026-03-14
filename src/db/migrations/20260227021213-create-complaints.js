@@ -28,7 +28,7 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM("PENDING", "DIPROSES", "SELESAI"),
+        type: Sequelize.ENUM("PENDING", "DITOLAK", "DIPROSES", "SELESAI"),
         defaultValue: "PENDING",
       },
       handled_by: {

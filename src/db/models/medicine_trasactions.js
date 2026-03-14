@@ -39,6 +39,9 @@ module.exports = (sequelize, DataTypes) => {
       quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          min: 1,
+        },
       },
       given_by: {
         type: DataTypes.UUID,
