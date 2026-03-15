@@ -8,6 +8,7 @@ const {
   lookup,
   remove,
   update,
+  getUserDashboard
 } = require("./users.service.js");
 const { v4: uuidv4 } = require("uuid");
 
@@ -83,4 +84,13 @@ const dropUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, lookAllUser, editUser, dropUser };
+const dashboardUsers = async (req, res) => {
+  try {
+    const data = await getUserDashboard();
+    return success(res, 200, "Admin dashboard user data", data);
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
+
+module.exports = { createUser, lookAllUser, editUser, dropUser, dashboardUsers };

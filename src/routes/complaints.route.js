@@ -58,4 +58,5 @@ router.post(
   validate,
   revertComplaint,
 );
+
 module.exports = router;

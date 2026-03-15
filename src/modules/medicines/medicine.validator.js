@@ -1,4 +1,4 @@
-const { body, param } = require("express-validator");
+const { body, param, query } = require("express-validator");
 const { Medicine } = require("../../db/models/index.js");
 
 const createObatValidator = [
@@ -29,7 +29,46 @@ const createObatValidator = [
     .withMessage("Stok harus berupa angka positif"),
 ];
 
-const updateStockValidator = [
+const updateMedicineValidation = [
+  param("id").isUUID().withMessage("ID harus berupa UUID yang valid"),
+
+  body("nama_obat")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Nama obat harus berupa string")
+    .bail()
+    .isLength({ max: 50 })
+    .withMessage("Nama obat maksimal 50 karakter")
+    .bail()
+    .custom(async (name) => {
+      const found = await Medicine.findOne({ where: { name } });
+      if (found) {
+        throw new Error("Nama obat sudah tersedia");
+      }
+      return true;
+    }),
+
+  body("deskripsi")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Deskripsi harus berupa string"),
+
+  body("stok")
+    .optional()
+    .toInt()
+    .isInt({ min: 1 })
+    .withMessage("Stok harus berupa angka positif"),
+
+  body("sediaan")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Sediaan harus berupa string"),
+];
+
+const restockValidator = [
   param("id").isUUID().withMessage("ID harus berupa UUID yang valid"),
   body("stok")
     .toInt()
@@ -40,4 +79,17 @@ const updateStockValidator = [
     .withMessage("Stok harus berupa angka positif"),
 ];
 
-module.exports = { createObatValidator, updateStockValidator };
+const dashboardValidation = [
+  query("threshold")
+    .optional()
+    .toInt()
+    .isInt({ min: 0 })
+    .withMessage("Threshold harus berupa angka positif"),
+];
+
+module.exports = {
+  createObatValidator,
+  restockValidator,
+  dashboardValidation,
+  updateMedicineValidation,
+};

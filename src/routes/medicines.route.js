@@ -2,12 +2,16 @@ const express = require("express");
 const {
   addMedicines,
   lookAllMedicines,
-  updateMedicine,
+  restockMedicine,
   dropMedicine,
+  dashboardMedicines,
+  updateMedicine,
 } = require("../modules/medicines/medicine.controller");
 const {
   createObatValidator,
-  updateStockValidator,
+  restockValidator,
+  dashboardValidation,
+  updateMedicineValidation,
 } = require("../modules/medicines/medicine.validator");
 const validate = require("../shared/middlewares/errors/validate");
 const verifyToken = require("../shared/middlewares/authMiddleware");
@@ -23,9 +27,9 @@ router.post(
   addMedicines,
 );
 router.patch(
-  "/update/:id",
+  "/edit/:id",
   verifyToken(["pengasuhan"]),
-  updateStockValidator,
+  updateMedicineValidation,
   validate,
   updateMedicine,
 );
@@ -35,5 +39,19 @@ router.delete(
   idValidation,
   validate,
   dropMedicine,
+);
+router.patch(
+  "/restock/:id",
+  verifyToken(["pengasuhan"]),
+  restockValidator,
+  validate,
+  restockMedicine,
+);
+router.get(
+  "/dashboard",
+  verifyToken(["admin", "pengasuhan"]),
+  dashboardValidation,
+  validate,
+  dashboardMedicines,
 );
 module.exports = router;

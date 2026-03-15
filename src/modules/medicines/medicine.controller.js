@@ -6,6 +6,7 @@ const {
   update,
   findMedicines,
   drop,
+  getMedicineDashboard,
 } = require("./medicine.service");
 const { v4: uuidv4 } = require("uuid");
 
@@ -39,6 +40,40 @@ const lookAllMedicines = async (req, res) => {
 
 const updateMedicine = async (req, res) => {
   try {
+    const {id} = req.params
+    const medicine = await findMedicines(id);
+    if (!medicine) return failed(res, 404, "Obat tidak ditemukan");
+    const { nama_obat, deskripsi, stok, sediaan } = req.body;
+    const body = {};
+    if (nama_obat !== undefined) body.name = nama_obat;
+    if (deskripsi !== undefined) body.description = deskripsi;
+    if (stok !== undefined) body.stock = stok;
+    if (sediaan !== undefined) {
+      const prep = await findPreparation(sediaan);
+      if (!prep) return failed(res, 404, "Sediaan tidak ditemukan");
+      body.preparation_id = prep.id;
+    }
+    await update(id, body);
+    return success(res, 200, "Data obat berhasil diupdate");
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+}
+
+const dropMedicine = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const medicine = await findMedicines(id);
+    if (!medicine) return failed(res, 404, "Obat tidak ditemukan");
+    await drop(id);
+    return success(res, 200, "Data obat berhaasil dihapus");
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
+
+const restockMedicine = async (req, res) => {
+  try {
     const { id } = req.params;
     const medicine = await findMedicines(id);
     if (!medicine) return failed(res, 404, "Obat tidak ditemukan");
@@ -53,13 +88,13 @@ const updateMedicine = async (req, res) => {
   }
 };
 
-const dropMedicine = async (req, res) => {
+const dashboardMedicines = async (req, res) => {
   try {
-    const { id } = req.params;
-    const medicine = await findMedicines(id);
-    if (!medicine) return failed(res, 404, "Obat tidak ditemukan");
-    await drop(id);
-    return success(res, 200, "Data obat berhaasil dihapus");
+    const threshold = req.query.threshold
+      ? parseInt(req.query.threshold, 10)
+      : undefined;
+    const data = await getMedicineDashboard({ threshold });
+    return success(res, 200, "Dashboard data obat", data);
   } catch (error) {
     return failed(res, 500, error.message);
   }
@@ -68,6 +103,8 @@ const dropMedicine = async (req, res) => {
 module.exports = {
   addMedicines,
   lookAllMedicines,
-  updateMedicine,
+  restockMedicine,
   dropMedicine,
+  dashboardMedicines,
+  updateMedicine
 };

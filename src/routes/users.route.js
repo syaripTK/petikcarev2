@@ -5,6 +5,7 @@ const {
   editUser,
   lookAllUser,
   dropUser,
+  dashboardUsers,
 } = require("../modules/users/users.controller");
 const {
   createValidator,
@@ -37,4 +38,5 @@ router.delete(
   validate,
   dropUser,
 );
+router.get("/dashboard", verifyToken(["admin"]), dashboardUsers);
 module.exports = router;
