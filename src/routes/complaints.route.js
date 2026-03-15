@@ -5,15 +5,18 @@ const {
   getMyComplaints,
   getComplaintById,
   deleteComplaint,
-  responseToComplaint
+  responseToComplaint,
+  revertComplaint
 } = require("../modules/complaints/complaint.controller");
 const verifyToken = require("../shared/middlewares/authMiddleware");
 const {
   createComplaintValidation,
   idValidation,
+  complaintResponseValidation,
 } = require("../modules/complaints/complaint.validator");
 const validate = require("../shared/middlewares/errors/validate");
 const router = Router();
+
 //============= SANTRI =============//
 router.post(
   "/create",
@@ -31,7 +34,7 @@ router.delete(
   deleteComplaint,
 );
 
-// ============PENGASUHAN =============//
+//============ PENGASUHAN =============//
 router.get("/lookall", verifyToken(["pengasuhan"]), getAllComplaints);
 router.get(
   "/search/:id",
@@ -44,8 +47,15 @@ router.post(
   "/respond/:id",
   verifyToken(["pengasuhan"]),
   idValidation,
+  complaintResponseValidation,
   validate,
   responseToComplaint,
 );
-
+router.post(
+  "/revert/:id",
+  verifyToken(["pengasuhan"]),
+  idValidation,
+  validate,
+  revertComplaint,
+);
 module.exports = router;

@@ -155,6 +155,41 @@ const handleComplaintResponse = async (complaintId, handlerId, data) => {
   });
 };
 
+const revertComplaintResponse = async (complaintId) => {
+  return await sequelize.transaction(async (t) => {
+    const transactions = await Medicine_trasactions.findAll({
+      where: { complaint_id: complaintId },
+      transaction: t,
+    });
+
+    for (const trans of transactions) {
+      await Medicine.increment("stock", {
+        by: trans.quantity,
+        where: { id: trans.medicine_id },
+        transaction: t,
+      });
+    }
+
+    await Medicine_trasactions.destroy({
+      where: { complaint_id: complaintId },
+      transaction: t,
+    });
+
+    const complaint = await Complaints.findByPk(complaintId, { transaction: t });
+    await complaint.update(
+      {
+        status: "PENDING",
+        handled_by: null,
+        handled_note: null,
+        handled_at: null,
+      },
+      { transaction: t },
+    );
+
+    return complaint;
+  });
+};
+
 module.exports = {
   create,
   getAll,
@@ -163,4 +198,5 @@ module.exports = {
   deleteById,
   deleteBySantriId,
   handleComplaintResponse,
+  revertComplaintResponse,
 };

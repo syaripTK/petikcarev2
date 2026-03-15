@@ -6,6 +6,7 @@ const {
   getBySantriId,
   deleteById,
   handleComplaintResponse,
+  revertComplaintResponse
 } = require("./complaint.service.js");
 const { v4: uuidv4 } = require("uuid");
 
@@ -75,11 +76,21 @@ const responseToComplaint = async (req, res) => {
       catatan,
       medicines,
     });
-    return success(res, 200, "Response to complaint successful", complaint);
+    return success(res, 200, "Response complaint berhasil", complaint);
   } catch (error) {
     return failed(res, 500, error.message);
   }
 };
+
+const revertComplaint = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const complaint = await revertComplaintResponse(id);
+    return success(res, 200, "Berhasil membatalkan response complaint", complaint);
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+}
 module.exports = {
   createComplaint,
   getAllComplaints,
@@ -87,4 +98,5 @@ module.exports = {
   getMyComplaints,
   deleteComplaint,
   responseToComplaint,
+  revertComplaint,
 };
