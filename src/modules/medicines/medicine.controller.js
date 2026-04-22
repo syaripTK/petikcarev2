@@ -7,6 +7,8 @@ const {
   findMedicines,
   drop,
   getMedicineDashboard,
+  getLowStock,
+  getMedicineHistory,
 } = require("./medicine.service");
 const { v4: uuidv4 } = require("uuid");
 
@@ -81,8 +83,8 @@ const restockMedicine = async (req, res) => {
     const body = {
       stock: stok,
     };
-    await update(id, body);
-    return success(res, 200, "Data obat berhasil diupdate");
+   const updated = await update(id, body);
+    return success(res, 200, "Data obat berhasil diupdate", updated);
   } catch (error) {
     return failed(res, 500, error.message);
   }
@@ -100,11 +102,37 @@ const dashboardMedicines = async (req, res) => {
   }
 };
 
+const lowStockMedicines = async (req, res) => {
+  try {
+    const threshold = req.query.threshold
+      ? parseInt(req.query.threshold, 10)
+      : 5;
+    const data = await getLowStock(threshold);
+    return success(res, 200, "Daftar obat low stock", { threshold, data });
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
+
+const medicineHistory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const med = await findMedicines(id);
+    if (!med) return failed(res, 404, "Obat tidak ditemukan");
+    const history = await getMedicineHistory(id);
+    return success(res, 200, "Riwayat transaksi obat", history);
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
+
 module.exports = {
   addMedicines,
   lookAllMedicines,
   restockMedicine,
   dropMedicine,
   dashboardMedicines,
+  lowStockMedicines,
+  medicineHistory,
   updateMedicine
 };

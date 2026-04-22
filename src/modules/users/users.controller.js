@@ -8,7 +8,7 @@ const {
   lookup,
   remove,
   update,
-  getUserDashboard
+  getUserDashboard,
 } = require("./users.service.js");
 const { v4: uuidv4 } = require("uuid");
 
@@ -40,6 +40,19 @@ const lookAllUser = async (req, res) => {
   }
 };
 
+const searchUserById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await findId(id);
+    if (!user) {
+      return failed(res, 404, `User dengan id (${id}) tidak ditemukan`);
+    }
+    return success(res, 200, "Data user berhasil diambil", user);
+  } catch (error) {
+    return failed(res, 500, error.message);
+  }
+};
+
 const editUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -47,7 +60,7 @@ const editUser = async (req, res) => {
     if (!user) {
       return failed(res, 404, `User dengan id (${id}) tidak ditemukan`);
     }
-    
+
     const updateBody = {};
     if (req.body.nama !== undefined) updateBody.name = req.body.nama;
     if (req.body.email !== undefined) updateBody.email = req.body.email;
@@ -93,4 +106,11 @@ const dashboardUsers = async (req, res) => {
   }
 };
 
-module.exports = { createUser, lookAllUser, editUser, dropUser, dashboardUsers };
+module.exports = {
+  createUser,
+  lookAllUser,
+  editUser,
+  dropUser,
+  dashboardUsers,
+  searchUserById
+};

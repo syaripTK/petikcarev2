@@ -5,6 +5,8 @@ const {
   restockMedicine,
   dropMedicine,
   dashboardMedicines,
+  lowStockMedicines,
+  medicineHistory,
   updateMedicine,
 } = require("../modules/medicines/medicine.controller");
 const {
@@ -53,5 +55,19 @@ router.get(
   dashboardValidation,
   validate,
   dashboardMedicines,
+);
+router.get(
+  "/low-stock",
+  verifyToken(["admin", "pengasuhan"]),
+  dashboardValidation,
+  validate,
+  lowStockMedicines,
+);
+router.get(
+  "/:id/history",
+  verifyToken(["admin", "pengasuhan"]),
+  idValidation,
+  validate,
+  medicineHistory,
 );
 module.exports = router;

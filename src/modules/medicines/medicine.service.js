@@ -2,7 +2,10 @@ const {
   Medicine,
   Preparations,
   Medicine_trasactions,
+  User,
+  Complaints,
 } = require("../../db/models/index.js");
+const sequelize = require("sequelize");
 
 const create = async (body) => {
   return await Medicine.create(body);
@@ -102,6 +105,49 @@ const getMedicineDashboard = async (opts = {}) => {
   };
 };
 
+const getLowStock = async (threshold = 5) => {
+  const medicines = await Medicine.findAll({
+    where: { stock: { [sequelize.Op.lte]: threshold } },
+    include: [
+      { model: Preparations, as: "preparation", attributes: ["id", "name"] },
+    ],
+    order: [["stock", "ASC"]],
+  });
+
+  return medicines.map((m) => ({
+    id: m.id,
+    name: m.name,
+    stock: m.stock,
+    preparation: m.preparation
+      ? { id: m.preparation.id, name: m.preparation.name }
+      : null,
+  }));
+};
+
+const getMedicineHistory = async (medicineId) => {
+  const transactions = await Medicine_trasactions.findAll({
+    where: { medicine_id: medicineId },
+    include: [
+      { model: User, as: "given_transactions", attributes: ["id", "name", "email"] },
+      { model: Complaints, as: "complaint", attributes: ["id", "keluhan"] },
+    ],
+    order: [["createdAt", "DESC"]],
+  });
+
+  return transactions.map((t) => ({
+    id: t.id,
+    quantity: t.quantity,
+    given_by: t.given_by,
+    given_by_info: t.given_transactions
+      ? { id: t.given_transactions.id, name: t.given_transactions.name }
+      : null,
+    complaint: t.complaint
+      ? { id: t.complaint.id, keluhan: t.complaint.keluhan }
+      : null,
+    createdAt: t.createdAt,
+  }));
+};
+
 module.exports = {
   create,
   look,
@@ -109,6 +155,7 @@ module.exports = {
   update,
   findMedicines,
   drop,
-  getMedicineDashboard
+  getMedicineDashboard,
+  getLowStock,
+  getMedicineHistory,
 };
-

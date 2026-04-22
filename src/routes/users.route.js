@@ -6,6 +6,7 @@ const {
   lookAllUser,
   dropUser,
   dashboardUsers,
+  searchUserById,
 } = require("../modules/users/users.controller");
 const {
   createValidator,
@@ -24,6 +25,7 @@ router.post(
   createUser,
 );
 router.get("/lookup", verifyToken(["admin"]), lookAllUser);
+router.get("/search/:id", idValidation, validate, searchUserById);
 router.patch(
   "/edit/:id",
   editUserValidator,
